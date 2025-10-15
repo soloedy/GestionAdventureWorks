@@ -1,0 +1,50 @@
+@page "/home-product"
+@rendermode InteractiveServer
+
+<PageTitle>Producción - Portal</PageTitle>
+
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <h2 class="card-title">Producción</h2>
+                <p class="card-text">Gestión de productos e inventario. Utilice las tarjetas para acceder a cada módulo.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-md-4">
+        <div class="card h-100 bg-light">
+            <div class="card-body text-center">
+                <i class="fas fa-box fa-2x mb-3 text-primary"></i>
+                <h5 class="card-title">Productos</h5>
+                <p class="card-text">Consulta y gestión de productos.</p>
+                <NavLink href="products" class="btn btn-outline-primary">Ir a Productos</NavLink>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card h-100 bg-light">
+            <div class="card-body text-center">
+                <i class="fas fa-warehouse fa-2x mb-3 text-success"></i>
+                <h5 class="card-title">Inventario</h5>
+                <p class="card-text">Consulta y actualización de inventarios.</p>
+                <NavLink href="inventory" class="btn btn-outline-success">Ir a Inventario</NavLink>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card h-100 bg-light">
+            <div class="card-body text-center">
+                <i class="fas fa-tasks fa-2x mb-3 text-warning"></i>
+                <h5 class="card-title">Órdenes de Trabajo</h5>
+                <p class="card-text">Consulta y gestión de órdenes de trabajo.</p>
+                <NavLink href="workorders" class="btn btn-outline-warning">Ir a Órdenes de Trabajo</NavLink>
+            </div>
+        </div>
+    </div>
+</div>

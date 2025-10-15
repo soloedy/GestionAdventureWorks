@@ -1,0 +1,50 @@
+@page "/home-report"
+@inject NavigationManager Navigation
+
+<PageTitle>Reportes - AdventureWorks Enterprise</PageTitle>
+
+<div class="container mt-4">
+    <h2 class="mb-4">Reportes</h2>
+    <div class="row">
+        <!-- RRHH -->
+        <div class="col-md-4 mb-3">
+            <div class="card h-100">
+                <div class="card-body d-flex flex-column justify-content-between">
+                    <div>
+                        <h5 class="card-title">Empleados con más tiempo en su departamento actual</h5>
+                        <p class="card-text">Reporte de Recursos Humanos que muestra los empleados con mayor antigüedad en su departamento actual.</p>
+                    </div>
+                    <NavLink class="btn btn-primary mt-3 text-center" href="/report-rrhh">Ver Reporte</NavLink>
+                </div>
+            </div>
+        </div>
+        <!-- Ventas -->
+        <div class="col-md-4 mb-3">
+            <div class="card h-100">
+                <div class="card-body d-flex flex-column justify-content-between">
+                    <div>
+                        <h5 class="card-title">Top 10 productos más vendidos</h5>
+                        <p class="card-text">Reporte de Ventas que muestra los productos con mayor volumen de ventas.</p>
+                    </div>
+                    <NavLink class="btn btn-success mt-3 text-center" href="/report-ventas">Ver Reporte</NavLink>
+                </div>
+            </div>
+        </div>
+        <!-- Producción -->
+        <div class="col-md-4 mb-3">
+            <div class="card h-100">
+                <div class="card-body d-flex flex-column justify-content-between">
+                    <div>
+                        <h5 class="card-title">Productos con bajo inventario</h5>
+                        <p class="card-text">Reporte de Producción que muestra los productos con inventario bajo según el parámetro indicado.</p>
+                    </div>
+                    <NavLink class="btn btn-warning mt-3 text-center" href="/report-produccion">Ver Reporte</NavLink>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    // Se reemplazó la navegación por botones con NavLink para asegurar el enrutamiento.
+}

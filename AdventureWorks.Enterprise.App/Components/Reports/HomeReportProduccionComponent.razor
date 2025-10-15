@@ -1,0 +1,111 @@
+@page "/report-produccion"
+@rendermode InteractiveServer
+@using AdventureWorks.Enterprise.App.Services
+@inject ApiService ApiService
+@inject ILogger<HomeReportProduccionComponent> Logger
+
+<PageTitle>Reporte: Productos con bajo inventario</PageTitle>
+
+<div class="container mt-4">
+    <div class="row mb-3">
+        <div class="col-md-8">
+            <h2>Productos con bajo inventario</h2>
+            <p class="text-muted">Reporte generado el @DateTime.Now.ToString("dd/MM/yyyy HH:mm")</p>
+        </div>
+    </div>
+    <div class="row mb-3">
+        <div class="col-md-4">
+            <label for="IntCantidad" class="form-label">Cantidad máxima de unidades:</label>
+            <input type="number" id="IntCantidad" class="form-control" min="1" max="1000" @bind="IntCantidad" />
+        </div>
+        <div class="col-md-4 d-flex align-items-end">
+            <button class="btn btn-primary" @onclick="FncGenerarReporteAsync" disabled="@(IsLoading || IntCantidad < 1)">
+                <i class="fas fa-search"></i> Generar Reporte
+            </button>
+        </div>
+    </div>
+    @if (IsLoading)
+    {
+        <div class="alert alert-info">Cargando reporte...</div>
+    }
+    else if (!string.IsNullOrEmpty(StrErrorMessage))
+    {
+        <div class="alert alert-danger">@StrErrorMessage</div>
+    }
+    else if (LstProductos != null && LstProductos.Count > 0)
+    {
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+                <thead class="table-light">
+                    <tr>
+                        <th>Código</th>
+                        <th>Nombre</th>
+                        <th>Número</th>
+                        <th>Inventario</th>
+                        <th>Ubicación</th>
+                        <th>Categoría</th>
+                        <th>Subcategoría</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var producto in LstProductos)
+                    {
+                        <tr>
+                            <td>@producto.ProductID</td>
+                            <td>@producto.ProductName</td>
+                            <td>@producto.ProductNumber</td>
+                            <td>@producto.Quantity</td>
+                            <td>@producto.LocationName</td>
+                            <td>@producto.CategoryName</td>
+                            <td>@producto.SubcategoryName</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-warning">No se encontraron productos con bajo inventario para el criterio seleccionado.</div>
+    }
+</div>
+
+@code {
+    private int IntCantidad = 10;
+    private bool IsLoading = false;
+    private string StrErrorMessage = string.Empty;
+    private List<ApiService.ProductLowInventoryDto> LstProductos = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await FncGenerarReporteAsync();
+    }
+
+    private async Task FncGenerarReporteAsync()
+    {
+        IsLoading = true;
+        StrErrorMessage = string.Empty;
+        LstProductos.Clear();
+        try
+        {
+            var response = await ApiService.GetLowInventoryAsync(IntCantidad);
+            if (response.Status && response.Data != null)
+            {
+                LstProductos = response.Data;
+            }
+            else
+            {
+                StrErrorMessage = response.Message ?? "Error al obtener el reporte.";
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Error al generar el reporte Producción");
+            StrErrorMessage = "Ocurrió un error inesperado al generar el reporte.";
+        }
+        finally
+        {
+            IsLoading = false;
+        }
+    }
+}

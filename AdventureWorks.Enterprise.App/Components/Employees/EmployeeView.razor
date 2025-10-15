@@ -1,0 +1,123 @@
+@using AdventureWorks.Enterprise.App.Models
+@using AdventureWorks.Enterprise.App.Services
+@using AdventureWorks.Enterprise.App.Components.Common
+@inject ApiService ApiService
+@inject NavigationManager Navigation
+@rendermode InteractiveServer
+
+@page "/employee/{EmployeeId:int}"
+
+<PageTitle>Detalle de Empleado</PageTitle>
+
+<div class="card">
+    <div class="card-header">
+        <h5 class="card-title mb-0">
+            <i class="fas fa-user me-2"></i>Detalle del Empleado
+        </h5>
+    </div>
+    <div class="card-body">
+        @if (IsLoading)
+        {
+            <div class="d-flex justify-content-center my-4">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Cargando...</span>
+                </div>
+            </div>
+        }
+        else if (!string.IsNullOrEmpty(ErrorMessage))
+        {
+            <div class="alert alert-danger">@ErrorMessage</div>
+        }
+        else if (Employee != null)
+        {
+            <div class="row">
+                <div class="col-md-6">
+                    <h6 class="text-primary mb-3">
+                        <i class="fas fa-user me-2"></i>Información Personal
+                    </h6>
+                    <div class="mb-3"><strong>Nombre:</strong> @Employee.StrFirstName</div>
+                    <div class="mb-3"><strong>Segundo Nombre:</strong> @Employee.StrMiddleName</div>
+                    <div class="mb-3"><strong>Apellido:</strong> @Employee.StrLastName</div>
+                    <div class="mb-3"><strong>Título:</strong> @Employee.StrTitle</div>
+                </div>
+                <div class="col-md-6">
+                    <h6 class="text-primary mb-3">
+                        <i class="fas fa-briefcase me-2"></i>Información Laboral
+                    </h6>
+                    <div class="mb-3"><strong>Número Nacional de ID:</strong> @Employee.StrNationalIDNumber</div>
+                    <div class="mb-3"><strong>ID de Login:</strong> @Employee.StrLoginID</div>
+                    <div class="mb-3"><strong>Puesto de Trabajo:</strong> @Employee.StrJobTitle</div>
+                    <div class="mb-3"><strong>Fecha de Nacimiento:</strong> @Employee.DtmBirthDate.ToString("dd/MM/yyyy")</div>
+                    <div class="mb-3"><strong>Estado Civil:</strong> @GetMaritalStatus(Employee.StrMaritalStatus)</div>
+                    <div class="mb-3"><strong>Género:</strong> @GetGender(Employee.StrGender)</div>
+                    <div class="mb-3"><strong>Fecha de Contratación:</strong> @Employee.DtmHireDate.ToString("dd/MM/yyyy")</div>
+                </div>
+            </div>
+            <div class="d-flex justify-content-end gap-2 mt-4">
+                <a href="/employees" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left me-2"></i>Volver al listado
+                </a>
+                <button type="button" class="btn btn-primary" @onclick="HandleCancel">
+                    <i class="fas fa-times me-2"></i>Cancelar
+                </button>
+            </div>
+        }
+    </div>
+</div>
+
+@code {
+    [Parameter] public int EmployeeId { get; set; }
+    [Parameter] public EventCallback OnCancel { get; set; }
+    private EmployeeFullReadDto? Employee;
+    private bool IsLoading = true;
+    private string ErrorMessage = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        IsLoading = true;
+        ErrorMessage = string.Empty;
+        var result = await ApiService.FncGetEmployeeByIdAsync(EmployeeId);
+        if (result.Status && result.Data != null)
+        {
+            Employee = result.Data;
+        }
+        else
+        {
+            ErrorMessage = result.Message;
+        }
+        IsLoading = false;
+    }
+
+    private async Task HandleCancel()
+    {
+        if (OnCancel.HasDelegate)
+        {
+            await OnCancel.InvokeAsync();
+        }
+        else
+        {
+            Console.WriteLine("Navegando a /employees");
+            Navigation.NavigateTo("/employees", true); // El parámetro true fuerza la recarga completa
+        }
+    }
+
+    private string GetMaritalStatus(string code)
+    {
+        return code switch
+        {
+            "M" => "Casado/a",
+            "S" => "Soltero/a",
+            _ => code
+        };
+    }
+
+    private string GetGender(string code)
+    {
+        return code switch
+        {
+            "M" => "Masculino",
+            "F" => "Femenino",
+            _ => code
+        };
+    }
+}

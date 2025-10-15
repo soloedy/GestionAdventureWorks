@@ -1,0 +1,47 @@
+﻿@inherits LayoutComponentBase
+
+<div class="page">
+    <div class="sidebar">
+        <NavMenu />
+    </div>
+
+    <main>
+        <div class="top-row px-4 d-flex justify-content-between align-items-center bg-light border-bottom">
+            <div class="d-flex align-items-center">
+                <h6 class="mb-0 text-muted">
+                    <i class="fas fa-calendar-alt me-2"></i>
+                    @DateTime.Now.ToString("dddd, dd MMMM yyyy", new System.Globalization.CultureInfo("es-ES"))
+                </h6>
+            </div>
+            <div class="d-flex align-items-center">
+                <span class="text-muted me-3">
+                    <i class="fas fa-user me-2"></i>
+                    Usuario: Admin
+                </span>
+                <a href="https://learn.microsoft.com/aspnet/core/" target="_blank" class="btn btn-outline-primary btn-sm">
+                    <i class="fas fa-question-circle me-2"></i>
+                    Ayuda
+                </a>
+            </div>
+        </div>
+
+        <article class="content px-4 py-3">
+            @Body
+        </article>
+    </main>
+</div>
+
+<div id="blazor-error-ui">
+    <div class="alert alert-danger" role="alert">
+        <i class="fas fa-exclamation-triangle me-2"></i>
+        <strong>Error:</strong> Ha ocurrido un error no controlado.
+        <button class="btn btn-outline-danger btn-sm ms-2 reload">
+            <i class="fas fa-redo me-1"></i>Recargar
+        </button>
+        <button class="btn btn-outline-secondary btn-sm ms-1 dismiss">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+</div>
+
+<!-- Incluir referencias a CSS/JS en _Host.cshtml o App.razor, no directamente en componentes Blazor -->

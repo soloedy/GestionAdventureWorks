@@ -1,0 +1,96 @@
+@using AdventureWorks.Enterprise.App.Models
+@using AdventureWorks.Enterprise.App.Services
+@inject ApiService ApiService
+@inject NavigationManager Navigation
+@rendermode InteractiveServer
+
+@page "/workorders"
+
+<PageTitle>Órdenes de Trabajo - Producción</PageTitle>
+
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="card-title">Órdenes de Trabajo</h5>
+        <button class="btn btn-primary" @onclick="NavigateToCreateWorkOrder">Crear Orden de Trabajo</button>
+    </div>
+    <div class="card-body">
+        @if (IsLoading)
+        {
+            <div class="d-flex justify-content-center my-4">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Cargando...</span>
+                </div>
+            </div>
+        }
+        else if (!string.IsNullOrEmpty(ErrorMessage))
+        {
+            <div class="alert alert-danger">@ErrorMessage</div>
+        }
+        else if (WorkOrders.Count == 0)
+        {
+            <div class="alert alert-info">No hay órdenes de trabajo registradas.</div>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table table-striped table-hover">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>ID</th>
+                            <th>Producto</th>
+                            <th>Cantidad</th>
+                            <th>Fecha Inicio</th>
+                            <th>Fecha Fin</th>
+                            <th>Fecha Vencimiento</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var wo in WorkOrders)
+                        {
+                            <tr>
+                                <td>@wo.WorkOrderID</td>
+                                <td>@wo.ProductName</td>
+                                <td>@wo.OrderQty</td>
+                                <td>@wo.StartDate.ToString("dd/MM/yyyy")</td>
+                                <td>@(wo.EndDate?.ToString("dd/MM/yyyy") ?? "-")</td>
+                                <td>@wo.DueDate.ToString("dd/MM/yyyy")</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>
+
+@code {
+    private List<WorkOrderReadDto> WorkOrders = new();
+    private bool IsLoading = true;
+    private string ErrorMessage = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadWorkOrders();
+    }
+
+    private async Task LoadWorkOrders()
+    {
+        IsLoading = true;
+        ErrorMessage = string.Empty;
+        var result = await ApiService.FncGetAllWorkOrdersAsync();
+        if (result.Status && result.Data != null)
+        {
+            WorkOrders = result.Data;
+        }
+        else
+        {
+            ErrorMessage = result.Message;
+        }
+        IsLoading = false;
+    }
+
+    private void NavigateToCreateWorkOrder()
+    {
+        Navigation.NavigateTo("/create-workorder");
+    }
+}

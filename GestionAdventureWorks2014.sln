@@ -1,0 +1,79 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36301.6
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+	ProjectSection(SolutionItems) = preProject
+		Contributing.md = Contributing.md
+		PROMPTS.md = PROMPTS.md
+		AdventureWorks.Enterprise.Api\TECHNICAL_DOC.md = AdventureWorks.Enterprise.Api\TECHNICAL_DOC.md
+		AdventureWorks.Enterprise.App\USER_GUIDE.md = AdventureWorks.Enterprise.App\USER_GUIDE.md
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdventureWorks.Enterprise.Api", "AdventureWorks.Enterprise.Api\AdventureWorks.Enterprise.Api.csproj", "{F9558996-11DA-48FE-A643-7AB6CEB09C9A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdventureWorks.Enterprise.Api.Tests", "AdventureWorks.Enterprise.Api.Tests\AdventureWorks.Enterprise.Api.Tests.csproj", "{A5E77A67-5FFF-4DB5-A37D-91E57F773D0B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "scripts", "scripts", "{7063D06F-E9AF-4AAD-90C8-5735DA610619}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sales", "Sales", "{2C681105-4221-4DE4-821D-79688783BA5D}"
+	ProjectSection(SolutionItems) = preProject
+		sales.md = sales.md
+		sp_creacionOrden.sql = sp_creacionOrden.sql
+		AdventureWorks.Enterprise.Api\Scripts\sp_TopProductosVentas.sql = AdventureWorks.Enterprise.Api\Scripts\sp_TopProductosVentas.sql
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Employees", "Employees", "{A37D4A66-6231-49A2-A434-7B0FED884DE4}"
+	ProjectSection(SolutionItems) = preProject
+		sp_BajoInventario.sql = sp_BajoInventario.sql
+		sp_time_employees.sql = sp_time_employees.sql
+		StoredProcedure_Person_Employee.sql = StoredProcedure_Person_Employee.sql
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Production", "Production", "{B1A8EE39-1F6B-4F6F-A07E-5D4A07684B17}"
+	ProjectSection(SolutionItems) = preProject
+		Production.md = Production.md
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdventureWorks.Enterprise.App", "AdventureWorks.Enterprise.App\AdventureWorks.Enterprise.App.csproj", "{401582FC-FC07-4E70-BE94-AC45316DC5EE}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "doc", "doc", "{5CA8AAE9-5A29-4D4B-ABC2-184063D9ADB1}"
+	ProjectSection(SolutionItems) = preProject
+		Contributing.md = Contributing.md
+		PROMPTS.md = PROMPTS.md
+		AdventureWorks.Enterprise.Api\TECHNICAL_DOC.md = AdventureWorks.Enterprise.Api\TECHNICAL_DOC.md
+		AdventureWorks.Enterprise.App\USER_GUIDE.md = AdventureWorks.Enterprise.App\USER_GUIDE.md
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F9558996-11DA-48FE-A643-7AB6CEB09C9A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F9558996-11DA-48FE-A643-7AB6CEB09C9A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F9558996-11DA-48FE-A643-7AB6CEB09C9A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F9558996-11DA-48FE-A643-7AB6CEB09C9A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A5E77A67-5FFF-4DB5-A37D-91E57F773D0B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A5E77A67-5FFF-4DB5-A37D-91E57F773D0B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A5E77A67-5FFF-4DB5-A37D-91E57F773D0B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A5E77A67-5FFF-4DB5-A37D-91E57F773D0B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{401582FC-FC07-4E70-BE94-AC45316DC5EE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{401582FC-FC07-4E70-BE94-AC45316DC5EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{401582FC-FC07-4E70-BE94-AC45316DC5EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{401582FC-FC07-4E70-BE94-AC45316DC5EE}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{2C681105-4221-4DE4-821D-79688783BA5D} = {7063D06F-E9AF-4AAD-90C8-5735DA610619}
+		{A37D4A66-6231-49A2-A434-7B0FED884DE4} = {7063D06F-E9AF-4AAD-90C8-5735DA610619}
+		{B1A8EE39-1F6B-4F6F-A07E-5D4A07684B17} = {7063D06F-E9AF-4AAD-90C8-5735DA610619}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {26B5E090-3BF1-4C60-8A9D-4FE0F84D3DA4}
+	EndGlobalSection
+EndGlobal

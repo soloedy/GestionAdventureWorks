@@ -1,0 +1,113 @@
+@page "/report-rrhh"
+@rendermode InteractiveServer
+@using AdventureWorks.Enterprise.App.Models
+@inject AdventureWorks.Enterprise.App.Services.ApiService ApiService
+@inject ILogger<HomeReportRRHHComponent> Logger
+
+<PageTitle>Reporte: Empleados con más tiempo en su departamento actual</PageTitle>
+
+<div class="container mt-4">
+    <div class="row mb-3">
+        <div class="col-md-8">
+            <h2>Empleados con más tiempo en su departamento actual</h2>
+            <p class="text-muted">Reporte generado el @DateTime.Now.ToString("dd/MM/yyyy HH:mm")</p>
+        </div>
+    </div>
+    <div class="row mb-3">
+        <div class="col-md-4">
+            <label for="IntCantidad" class="form-label">Cantidad de empleados a mostrar:</label>
+            <input type="number" id="IntCantidad" class="form-control" min="1" max="100" @bind="IntCantidad" />
+        </div>
+        <div class="col-md-4 d-flex align-items-end">
+            <button class="btn btn-primary" @onclick="FncGenerarReporteAsync" disabled="@(IsLoading || IntCantidad < 1)">
+                <i class="fas fa-search"></i> Generar Reporte
+            </button>
+        </div>
+    </div>
+    @if (IsLoading)
+    {
+        <div class="alert alert-info">Cargando reporte...</div>
+    }
+    else if (!string.IsNullOrEmpty(StrErrorMessage))
+    {
+        <div class="alert alert-danger">@StrErrorMessage</div>
+    }
+    else if (LstEmpleados != null && LstEmpleados.Count > 0)
+    {
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+                <thead class="table-light">
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Departamento</th>
+                        <th>Fecha Inicio</th>
+                        <th>Días en Departamento</th>
+                        <th>Años en Departamento</th>
+                        <th>Puesto</th>
+                        <th>Fecha Contratación</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var empleado in LstEmpleados)
+                    {
+                        <tr>
+                            <td>@empleado.IntBusinessEntityID</td>
+                            <td>@empleado.StrFullName</td>
+                            <td>@empleado.StrDepartmentName</td>
+                            <td>@empleado.DtmStartDate.ToString("dd/MM/yyyy")</td>
+                            <td>@empleado.IntDaysInDepartment</td>
+                            <td>@empleado.IntYearsInDepartment</td>
+                            <td>@empleado.StrJobTitle</td>
+                            <td>@empleado.DtmHireDate.ToString("dd/MM/yyyy")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-warning">No se encontraron empleados para el criterio seleccionado.</div>
+    }
+</div>
+
+@code {
+    private int IntCantidad = 10;
+    private bool IsLoading = false;
+    private string StrErrorMessage = string.Empty;
+    private List<EmployeeDepartmentDto> LstEmpleados = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await FncGenerarReporteAsync();
+    }
+
+    private async Task FncGenerarReporteAsync()
+    {
+        IsLoading = true;
+        StrErrorMessage = string.Empty;
+        LstEmpleados.Clear();
+        try
+        {
+            var response = await ApiService.FncGetEmployeesByDepartmentTimeAsync(IntCantidad);
+            if (response.Status && response.Data != null)
+            {
+                LstEmpleados = response.Data;
+            }
+            else
+            {
+                StrErrorMessage = response.Message ?? "Error al obtener el reporte.";
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Error al generar el reporte RRHH");
+            StrErrorMessage = "Ocurrió un error inesperado al generar el reporte.";
+        }
+        finally
+        {
+            IsLoading = false;
+        }
+    }
+}

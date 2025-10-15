@@ -1,0 +1,59 @@
+@if (!string.IsNullOrEmpty(StrMessage))
+{
+    <div class="alert @FncGetAlertClass() alert-dismissible fade show" role="alert">
+        <i class="@FncGetIconClass() me-2"></i>
+        <strong>@StrTitle</strong> @StrMessage
+        @if (!string.IsNullOrEmpty(StrDetails))
+        {
+            <br/>
+            <small class="text-muted">@StrDetails</small>
+        }
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" @onclick="FncClose"></button>
+    </div>
+}
+
+@code {
+    [Parameter] public string StrMessage { get; set; } = string.Empty;
+    [Parameter] public string StrTitle { get; set; } = string.Empty;
+    [Parameter] public string StrDetails { get; set; } = string.Empty;
+    [Parameter] public AlertType ObjType { get; set; } = AlertType.Info;
+    [Parameter] public EventCallback OnClosed { get; set; }
+
+    public enum AlertType
+    {
+        Success,
+        Warning,
+        Error,
+        Info
+    }
+
+    private string FncGetAlertClass()
+    {
+        return ObjType switch
+        {
+            AlertType.Success => "alert-success",
+            AlertType.Warning => "alert-warning", 
+            AlertType.Error => "alert-danger",
+            AlertType.Info => "alert-info",
+            _ => "alert-info"
+        };
+    }
+
+    private string FncGetIconClass()
+    {
+        return ObjType switch
+        {
+            AlertType.Success => "fas fa-check-circle",
+            AlertType.Warning => "fas fa-exclamation-triangle",
+            AlertType.Error => "fas fa-exclamation-circle",
+            AlertType.Info => "fas fa-info-circle",
+            _ => "fas fa-info-circle"
+        };
+    }
+
+    private async Task FncClose()
+    {
+        StrMessage = string.Empty;
+        await OnClosed.InvokeAsync();
+    }
+}

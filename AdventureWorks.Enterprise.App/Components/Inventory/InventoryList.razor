@@ -1,0 +1,96 @@
+@using AdventureWorks.Enterprise.App.Models
+@using AdventureWorks.Enterprise.App.Services
+@inject ApiService ApiService
+@inject NavigationManager Navigation
+@rendermode InteractiveServer
+
+@page "/inventory"
+
+<PageTitle>Inventario - Producción</PageTitle>
+
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="card-title">Inventario de Productos</h5>
+    </div>
+    <div class="card-body">
+        @if (IsLoading)
+        {
+            <div class="d-flex justify-content-center my-4">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Cargando...</span>
+                </div>
+            </div>
+        }
+        else if (!string.IsNullOrEmpty(ErrorMessage))
+        {
+            <div class="alert alert-danger">@ErrorMessage</div>
+        }
+        else if (Inventories.Count == 0)
+        {
+            <div class="alert alert-info">No hay inventario registrado.</div>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table table-striped table-hover">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>ID Producto</th>
+                            <th>Nombre</th>
+                            <th>Ubicación</th>
+                            <th>Shelf</th>
+                            <th>Bin</th>
+                            <th>Cantidad</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var inv in Inventories)
+                        {
+                            <tr>
+                                <td>@inv.ProductID</td>
+                                <td>@inv.ProductName</td>
+                                <td>@inv.LocationID</td>
+                                <td>@inv.Shelf</td>
+                                <td>@inv.Bin</td>
+                                <td>@inv.Quantity</td>
+                                <td>
+                                    <NavLink href="@($"edit-inventory/{inv.ProductID}/{inv.LocationID}")" class="btn btn-outline-primary btn-sm">
+                                        <i class="fas fa-edit me-1"></i>Editar
+                                    </NavLink>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>
+
+@code {
+    private List<ProductInventoryReadDto> Inventories = new();
+    private bool IsLoading = true;
+    private string ErrorMessage = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadInventories();
+    }
+
+    private async Task LoadInventories()
+    {
+        IsLoading = true;
+        ErrorMessage = string.Empty;
+        var result = await ApiService.FncGetAllProductInventoriesAsync();
+        if (result.Status && result.Data != null)
+        {
+            Inventories = result.Data;
+        }
+        else
+        {
+            ErrorMessage = result.Message;
+        }
+        IsLoading = false;
+    }
+}

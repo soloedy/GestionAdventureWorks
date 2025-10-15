@@ -1,0 +1,229 @@
+@using AdventureWorks.Enterprise.App.Models
+@using AdventureWorks.Enterprise.App.Services
+@using AdventureWorks.Enterprise.App.Components.Common
+@using System.ComponentModel.DataAnnotations
+@inject ApiService ApiService
+
+<div class="card">
+    <div class="card-header">
+        <h5 class="card-title mb-0">
+            <i class="fas fa-user-plus me-2"></i>Crear Nuevo Empleado
+        </h5>
+    </div>
+    <div class="card-body">
+        <AlertDisplay StrMessage="@StrAlertMessage" 
+                     StrTitle="@StrAlertTitle" 
+                     StrDetails="@StrAlertDetails"
+                     ObjType="@ObjAlertType" 
+                     OnClosed="FncClearAlert" />
+
+        <EditForm Model="@ObjEmployee" OnValidSubmit="@FncHandleValidSubmit">
+            <DataAnnotationsValidator />
+            
+            <div class="row">
+                <!-- Información Personal -->
+                <div class="col-md-6">
+                    <h6 class="text-primary mb-3">
+                        <i class="fas fa-user me-2"></i>Información Personal
+                    </h6>
+                    
+                    <div class="mb-3">
+                        <label for="firstName" class="form-label">Nombre *</label>
+                        <InputText id="firstName" class="form-control" @bind-Value="ObjEmployee.StrFirstName" />
+                        <ValidationMessage For="@(() => ObjEmployee.StrFirstName)" class="text-danger" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="middleName" class="form-label">Segundo Nombre</label>
+                        <InputText id="middleName" class="form-control" @bind-Value="ObjEmployee.StrMiddleName" />
+                        <ValidationMessage For="@(() => ObjEmployee.StrMiddleName)" class="text-danger" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="lastName" class="form-label">Apellido *</label>
+                        <InputText id="lastName" class="form-control" @bind-Value="ObjEmployee.StrLastName" />
+                        <ValidationMessage For="@(() => ObjEmployee.StrLastName)" class="text-danger" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="title" class="form-label">Título</label>
+                        <InputText id="title" class="form-control" @bind-Value="ObjEmployee.StrTitle" />
+                        <ValidationMessage For="@(() => ObjEmployee.StrTitle)" class="text-danger" />
+                    </div>
+                </div>
+
+                <!-- Información de Empleado -->
+                <div class="col-md-6">
+                    <h6 class="text-primary mb-3">
+                        <i class="fas fa-briefcase me-2"></i>Información Laboral
+                    </h6>
+
+                    <div class="mb-3">
+                        <label for="nationalId" class="form-label">Número Nacional de ID *</label>
+                        <InputText id="nationalId" class="form-control" @bind-Value="ObjEmployee.StrNationalIDNumber" />
+                        <ValidationMessage For="@(() => ObjEmployee.StrNationalIDNumber)" class="text-danger" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="loginId" class="form-label">ID de Login *</label>
+                        <InputText id="loginId" class="form-control" @bind-Value="ObjEmployee.StrLoginID" />
+                        <ValidationMessage For="@(() => ObjEmployee.StrLoginID)" class="text-danger" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="jobTitle" class="form-label">Puesto de Trabajo *</label>
+                        <InputText id="jobTitle" class="form-control" @bind-Value="ObjEmployee.StrJobTitle" />
+                        <ValidationMessage For="@(() => ObjEmployee.StrJobTitle)" class="text-danger" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="birthDate" class="form-label">Fecha de Nacimiento *</label>
+                        <InputDate id="birthDate" class="form-control" @bind-Value="DtmBirthDate" />
+                        <ValidationMessage For="@(() => ObjEmployee.DtmBirthDate)" class="text-danger" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="maritalStatus" class="form-label">Estado Civil *</label>
+                        <InputSelect id="maritalStatus" class="form-select" @bind-Value="ObjEmployee.StrMaritalStatus">
+                            <option value="">Seleccione...</option>
+                            <option value="M">Casado/a</option>
+                            <option value="S">Soltero/a</option>
+                        </InputSelect>
+                        <ValidationMessage For="@(() => ObjEmployee.StrMaritalStatus)" class="text-danger" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="gender" class="form-label">Género *</label>
+                        <InputSelect id="gender" class="form-select" @bind-Value="ObjEmployee.StrGender">
+                            <option value="">Seleccione...</option>
+                            <option value="M">Masculino</option>
+                            <option value="F">Femenino</option>
+                        </InputSelect>
+                        <ValidationMessage For="@(() => ObjEmployee.StrGender)" class="text-danger" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="hireDate" class="form-label">Fecha de Contratación *</label>
+                        <InputDate id="hireDate" class="form-control" @bind-Value="DtmHireDate" />
+                        <ValidationMessage For="@(() => ObjEmployee.DtmHireDate)" class="text-danger" />
+                    </div>
+                </div>
+            </div>
+
+            <ValidationSummary class="text-danger" />
+
+            <div class="d-flex justify-content-end gap-2 mt-4">
+                <button type="button" class="btn btn-secondary" @onclick="FncCancel" disabled="@BlnLoading">
+                    <i class="fas fa-times me-2"></i>Cancelar
+                </button>
+                <button type="submit" class="btn btn-primary" disabled="@BlnLoading">
+                    @if (BlnLoading)
+                    {
+                        <div class="spinner-border spinner-border-sm me-2" role="status">
+                            <span class="visually-hidden">Cargando...</span>
+                        </div>
+                    }
+                    else
+                    {
+                        <i class="fas fa-save me-2"></i>
+                    }
+                    Crear Empleado
+                </button>
+            </div>
+        </EditForm>
+    </div>
+</div>
+
+@code {
+    [Parameter] public EventCallback OnCancel { get; set; }
+    [Parameter] public EventCallback<bool> OnEmployeeCreated { get; set; }
+
+    private CreateEmployeeFullDto ObjEmployee = new();
+    private bool BlnLoading = false;
+
+    // Variables para alertas
+    private string StrAlertMessage = string.Empty;
+    private string StrAlertTitle = string.Empty;
+    private string StrAlertDetails = string.Empty;
+    private AlertDisplay.AlertType ObjAlertType = AlertDisplay.AlertType.Info;
+
+    // Variables auxiliares para fechas
+    private DateTime DtmBirthDate
+    {
+        get => ObjEmployee.DtmBirthDate.ToDateTime(TimeOnly.MinValue);
+        set => ObjEmployee.DtmBirthDate = DateOnly.FromDateTime(value);
+    }
+
+    private DateTime DtmHireDate
+    {
+        get => ObjEmployee.DtmHireDate.ToDateTime(TimeOnly.MinValue);
+        set => ObjEmployee.DtmHireDate = DateOnly.FromDateTime(value);
+    }
+
+    protected override void OnInitialized()
+    {
+        // Inicializar valores por defecto
+        ObjEmployee.StrPersonType = "EM"; // Tipo Persona oculto
+        ObjEmployee.BlnNameStyle = false; // Estilo de nombre oculto
+        ObjEmployee.IntEmailPromotion = 0; // Promoción por email oculto
+        ObjEmployee.BlnSalariedFlag = true; // Empleado Asalariado oculto
+        ObjEmployee.IntVacationHours = 0; // Horas de vacación oculto
+        ObjEmployee.IntSickLeaveHours = 0; // Horas de enfermedad oculto
+        ObjEmployee.BlnCurrentFlag = true; // Empleado actual oculto
+        ObjEmployee.DtmHireDate = DateOnly.FromDateTime(DateTime.Today);
+        ObjEmployee.DtmBirthDate = DateOnly.FromDateTime(DateTime.Today.AddYears(-25));
+    }
+
+    private async Task FncHandleValidSubmit()
+    {
+        BlnLoading = true;
+        FncClearAlert();
+        StateHasChanged();
+
+        try
+        {
+            var ObjResult = await ApiService.FncCreateEmployeeFullAsync(ObjEmployee);
+
+            if (ObjResult.Status)
+            {
+                FncShowAlert("Éxito", ObjResult.Message, "", AlertDisplay.AlertType.Success);
+                await OnEmployeeCreated.InvokeAsync(true);
+            }
+            else
+            {
+                FncShowAlert("Error", ObjResult.Message, ObjResult.Observacion ?? "", AlertDisplay.AlertType.Error);
+            }
+        }
+        catch (Exception Ex)
+        {
+            FncShowAlert("Error", "Error al crear empleado.", Ex.Message, AlertDisplay.AlertType.Error);
+        }
+        finally
+        {
+            BlnLoading = false;
+            StateHasChanged();
+        }
+    }
+
+    private async Task FncCancel()
+    {
+        await OnCancel.InvokeAsync();
+    }
+
+    private void FncShowAlert(string StrTitle, string StrMessage, string StrDetails, AlertDisplay.AlertType ObjType)
+    {
+        StrAlertTitle = StrTitle;
+        StrAlertMessage = StrMessage;
+        StrAlertDetails = StrDetails;
+        ObjAlertType = ObjType;
+        StateHasChanged();
+    }
+
+    private void FncClearAlert()
+    {
+        StrAlertMessage = string.Empty;
+        StrAlertTitle = string.Empty;
+        StrAlertDetails = string.Empty;
+        StateHasChanged();
+    }
+}

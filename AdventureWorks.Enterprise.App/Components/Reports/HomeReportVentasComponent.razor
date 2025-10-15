@@ -1,0 +1,98 @@
+@page "/report-ventas"
+@using AdventureWorks.Enterprise.App.Services
+@inject ApiService ApiService
+@inject ILogger<HomeReportVentasComponent> Logger
+
+<PageTitle>Reporte: Top 10 productos más vendidos</PageTitle>
+
+<div class="container mt-4">
+    <div class="row mb-3">
+        <div class="col-md-8">
+            <h2>Top 10 productos más vendidos</h2>
+            <p class="text-muted">Reporte generado el @DateTime.Now.ToString("dd/MM/yyyy HH:mm")</p>
+        </div>
+    </div>
+    @if (IsLoading)
+    {
+        <div class="alert alert-info">Cargando reporte...</div>
+    }
+    else if (!string.IsNullOrEmpty(StrErrorMessage))
+    {
+        <div class="alert alert-danger">@StrErrorMessage</div>
+    }
+    else if (LstProductos != null && LstProductos.Count > 0)
+    {
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+                <thead class="table-light">
+                    <tr>
+                        <th>Código</th>
+                        <th>Descripción</th>
+                        <th>Precio unitario</th>
+                        <th>Unidades vendidas</th>
+                        <th>Total vendido</th>
+                        <th>Categoría</th>
+                        <th>Subcategoría</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var producto in LstProductos)
+                    {
+                        <tr>
+                            <td>@producto.ProductID</td>
+                            <td>@producto.ProductName</td>
+                            <td>@producto.UnitPrice.ToString("C2")</td>
+                            <td>@producto.TotalQuantitySold</td>
+                            <td>@producto.TotalSalesAmount.ToString("C2")</td>
+                            <td>@producto.CategoryName</td>
+                            <td>@producto.SubCategoryName</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-warning">No se encontraron productos para el criterio seleccionado.</div>
+    }
+</div>
+
+@code {
+    private bool IsLoading = false;
+    private string StrErrorMessage = string.Empty;
+    private List<ApiService.TopProductSalesDto> LstProductos = new();
+
+    private async Task FncGenerarReporte()
+    {
+        IsLoading = true;
+        StrErrorMessage = string.Empty;
+        LstProductos.Clear();
+        try
+        {
+            var response = await ApiService.FncObtenerTopProductosAsync();
+            if (response.Status && response.Data != null)
+            {
+                LstProductos = response.Data;
+            }
+            else
+            {
+                StrErrorMessage = response.Message ?? "Error al obtener el reporte.";
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Error al generar el reporte Ventas");
+            StrErrorMessage = "Ocurrió un error inesperado al generar el reporte.";
+        }
+        finally
+        {
+            IsLoading = false;
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await FncGenerarReporte();
+    }
+}

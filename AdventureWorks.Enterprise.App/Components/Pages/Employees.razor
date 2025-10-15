@@ -1,0 +1,62 @@
+@page "/employees"
+@using AdventureWorks.Enterprise.App.Components.Employees
+@inject NavigationManager Navigation
+@rendermode InteractiveServer
+
+<PageTitle>Empleados - Recursos Humanos</PageTitle>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            @if (StrCurrentView == "list")
+            {
+                <EmployeeList OnNavigateToCreate="EventCallback.Factory.Create(this, FncNavigateToCreate)" 
+                             OnNavigateToEdit="EventCallback.Factory.Create(this, FncNavigateToEdit)"
+                             OnNavigateToView="EventCallback.Factory.Create(this, FncNavigateToView)" />
+            }
+            else if (StrCurrentView == "create")
+            {
+                <EmployeeCreate OnCancel="EventCallback.Factory.Create(this, FncNavigateToList)" 
+                               OnEmployeeCreated="EventCallback.Factory.Create<bool>(this, FncOnEmployeeCreated)" />
+            }
+        </div>
+    </div>
+</div>
+
+@code {
+    private string StrCurrentView = "list";
+
+    private void FncNavigateToCreate()
+    {
+        StrCurrentView = "create";
+        StateHasChanged();
+    }
+
+    private void FncNavigateToEdit()
+    {
+        StrCurrentView = "edit";
+        StateHasChanged();
+    }
+
+    private void FncNavigateToView()
+    {
+        StrCurrentView = "view";
+        StateHasChanged();
+    }
+
+    private void FncNavigateToList()
+    {
+        StrCurrentView = "list";
+        StateHasChanged();
+    }
+
+    private async Task FncOnEmployeeCreated(bool BlnSuccess)
+    {
+        if (BlnSuccess)
+        {
+            // Esperar un momento para mostrar el mensaje de éxito antes de navegar
+            await Task.Delay(2000);
+            FncNavigateToList();
+        }
+    }
+}

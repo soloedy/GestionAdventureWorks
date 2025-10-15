@@ -1,0 +1,98 @@
+@page "/product-view/{ProductId:int}"
+@using AdventureWorks.Enterprise.App.Models
+@using AdventureWorks.Enterprise.App.Services
+@inject ApiService ApiService
+@inject NavigationManager Navigation
+@rendermode InteractiveServer
+
+<PageTitle>Detalle de Producto</PageTitle>
+
+<div class="card">
+    <div class="card-header">
+        <h5 class="card-title mb-0">
+            <i class="fas fa-box me-2"></i>Detalle de Producto
+        </h5>
+    </div>
+    <div class="card-body">
+        @if (IsLoading)
+        {
+            <div class="d-flex justify-content-center my-4">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Cargando...</span>
+                </div>
+            </div>
+        }
+        else if (!string.IsNullOrEmpty(ErrorMessage))
+        {
+            <div class="alert alert-danger">@ErrorMessage</div>
+        }
+        else if (Product == null)
+        {
+            <div class="alert alert-info">No se encontró el producto.</div>
+        }
+        else
+        {
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-3"><strong>Nombre:</strong> @Product.Name</div>
+                    <div class="mb-3"><strong>Número:</strong> @Product.ProductNumber</div>
+                    <div class="mb-3"><strong>Color:</strong> @Product.Color</div>
+                    <div class="mb-3"><strong>Precio:</strong> @Product.ListPrice.ToString("C")</div>
+                    <div class="mb-3"><strong>Tamaño:</strong> @Product.Size</div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3"><strong>Subcategoría ID:</strong> @Product.ProductSubcategoryID</div>
+                    <div class="mb-3"><strong>Categoría ID:</strong> @Product.ProductCategoryID</div>
+                    <div class="mb-3"><strong>Fecha Inicio Venta:</strong> @Product.SellStartDate.ToShortDateString()</div>
+                    <div class="mb-3"><strong>Fecha Fin Venta:</strong> @(Product.SellEndDate?.ToShortDateString() ?? "-")</div>
+                    <div class="mb-3"><strong>Fecha Discontinuación:</strong> @(Product.DiscontinuedDate?.ToShortDateString() ?? "-")</div>
+                </div>
+            </div>
+            <div class="d-flex justify-content-end gap-2 mt-4">
+                <button type="button" class="btn btn-secondary" @onclick="NavigateToList">
+                    <i class="fas fa-arrow-left me-2"></i>Regresar al listado de productos
+                </button>
+            </div>
+        }
+    </div>
+</div>
+
+@code {
+    [Parameter] public int ProductId { get; set; }
+    private ProductReadDto? Product;
+    private bool IsLoading = true;
+    private string ErrorMessage = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadProduct();
+    }
+
+    private async Task LoadProduct()
+    {
+        IsLoading = true;
+        ErrorMessage = string.Empty;
+        try
+        {
+            var result = await ApiService.FncGetProductByIdAsync(ProductId);
+            if (result.Status && result.Data != null)
+            {
+                Product = result.Data;
+            }
+            else
+            {
+                ErrorMessage = result.Message;
+            }
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = $"Error al cargar el producto: {ex.Message}";
+        }
+        IsLoading = false;
+    }
+
+    private void NavigateToList()
+    {
+        Navigation.NavigateTo("/products");
+    }
+}

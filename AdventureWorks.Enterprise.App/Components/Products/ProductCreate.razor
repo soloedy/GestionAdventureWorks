@@ -1,0 +1,111 @@
+@using AdventureWorks.Enterprise.App.Models
+@using AdventureWorks.Enterprise.App.Services
+@inject ApiService ApiService
+@inject NavigationManager Navigation
+@rendermode InteractiveServer
+
+@page "/create-product"
+
+<PageTitle>Crear Producto</PageTitle>
+
+<div class="card">
+    <div class="card-header">
+        <h5 class="card-title mb-0">
+            <i class="fas fa-box me-2"></i>Crear Nuevo Producto
+        </h5>
+    </div>
+    <div class="card-body">
+        @if (!string.IsNullOrEmpty(ErrorMessage))
+        {
+            <div class="alert alert-danger">@ErrorMessage</div>
+        }
+        <EditForm Model="@Product" OnValidSubmit="HandleValidSubmit">
+            <DataAnnotationsValidator />
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Nombre *</label>
+                        <InputText id="name" class="form-control" @bind-Value="Product.Name" />
+                        <ValidationMessage For="@(() => Product.Name)" class="text-danger" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="productNumber" class="form-label">Número *</label>
+                        <InputText id="productNumber" class="form-control" @bind-Value="Product.ProductNumber" />
+                        <ValidationMessage For="@(() => Product.ProductNumber)" class="text-danger" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="color" class="form-label">Color</label>
+                        <InputText id="color" class="form-control" @bind-Value="Product.Color" />
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="listPrice" class="form-label">Precio *</label>
+                        <InputNumber id="listPrice" class="form-control" @bind-Value="Product.ListPrice" />
+                        <ValidationMessage For="@(() => Product.ListPrice)" class="text-danger" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="size" class="form-label">Tamaño</label>
+                        <InputText id="size" class="form-control" @bind-Value="Product.Size" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="sellStartDate" class="form-label">Fecha Inicio Venta *</label>
+                        <InputDate id="sellStartDate" class="form-control" @bind-Value="Product.SellStartDate" />
+                        <ValidationMessage For="@(() => Product.SellStartDate)" class="text-danger" />
+                    </div>
+                </div>
+            </div>
+            <ValidationSummary class="text-danger" />
+            <div class="d-flex justify-content-end gap-2 mt-4">
+                <button type="button" class="btn btn-secondary" @onclick="NavigateToList" disabled="@IsLoading">
+                    <i class="fas fa-arrow-left me-2"></i>Cancelar
+                </button>
+                <button type="submit" class="btn btn-primary" disabled="@IsLoading">
+                    @if (IsLoading)
+                    {
+                        <div class="spinner-border spinner-border-sm me-2" role="status">
+                            <span class="visually-hidden">Cargando...</span>
+                        </div>
+                    }
+                    else
+                    {
+                        <i class="fas fa-save me-2"></i>
+                    }
+                    Crear Producto
+                </button>
+            </div>
+        </EditForm>
+    </div>
+</div>
+
+@code {
+    private ProductCreateDto Product = new()
+    {
+        SellStartDate = DateTime.Today
+    };
+    private bool IsLoading = false;
+    private string ErrorMessage = string.Empty;
+
+    private async Task HandleValidSubmit()
+    {
+        IsLoading = true;
+        ErrorMessage = string.Empty;
+        StateHasChanged();
+        var result = await ApiService.FncCreateProductAsync(Product);
+        if (result.Status)
+        {
+            Navigation.NavigateTo("/products");
+        }
+        else
+        {
+            ErrorMessage = result.Message;
+        }
+        IsLoading = false;
+        StateHasChanged();
+    }
+
+    private void NavigateToList()
+    {
+        Navigation.NavigateTo("/products");
+    }
+}

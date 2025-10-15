@@ -1,0 +1,135 @@
+@page "/edit-inventory/{ProductId:int}/{LocationId:int}"
+
+@using AdventureWorks.Enterprise.App.Models
+@using AdventureWorks.Enterprise.App.Services
+@inject ApiService ApiService
+@inject NavigationManager Navigation
+@rendermode InteractiveServer
+
+<h3>Editar Inventario</h3>
+
+@if (IsLoading)
+{
+    <p>Cargando...</p>
+}
+else if (ErrorMessage != "")
+{
+    <div class="alert alert-danger">
+        @ErrorMessage
+        <br />
+        @DebugInfo
+    </div>
+}
+else if (Inventory == null)
+{
+    <div class="alert alert-warning">
+        No se encontró el inventario.<br />
+        ProductId: @ProductId, LocationId: @LocationId
+    </div>
+}
+else
+{
+    <div class="card">
+        <div class="card-body">
+            <EditForm Model="@UpdateDto" OnValidSubmit="HandleValidSubmit" FormName="EditInventoryForm">
+                <p><strong>Producto:</strong> @Inventory.ProductName</p>
+                <p><strong>Ubicación:</strong> @Inventory.LocationID</p>
+                <p><strong>Estante (Shelf):</strong> @Inventory.Shelf</p>
+                <p><strong>Bin:</strong> @Inventory.Bin</p>
+                <p><strong>Cantidad:</strong> 
+                    <InputNumber @bind-Value="UpdateDto.Quantity" class="form-control" />
+                </p>
+                <button type="submit" class="btn btn-primary" disabled="@IsLoading">
+                    @if (IsLoading)
+                    {
+                        <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                    }
+                    Actualizar
+                </button>
+                <button type="button" class="btn btn-secondary" @onclick="NavigateToList" disabled="@IsLoading">Cancelar</button>
+            </EditForm>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter] public int ProductId { get; set; }
+    [Parameter] public int LocationId { get; set; }
+    private ProductInventoryReadDto? Inventory;
+    private ProductInventoryUpdateDto UpdateDto = new();
+    private bool IsLoading = true;
+    private string ErrorMessage = "";
+    private string DebugInfo = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var result = await ApiService.FncGetProductInventoryByIdAsync(ProductId, (short)LocationId);
+            DebugInfo = $"API Status: {result.Status}";
+
+            if (result.Status && result.Data != null)
+            {
+                Inventory = result.Data;
+                UpdateDto = new ProductInventoryUpdateDto
+                {
+                    ProductID = ProductId,
+                    LocationID = (short)LocationId,
+                    Shelf = Inventory.Shelf,
+                    Bin = Inventory.Bin,
+                    Quantity = Inventory.Quantity
+                };
+            }
+            else
+            {
+                ErrorMessage = result.Message ?? "No se pudo obtener el inventario";
+            }
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = "Error al cargar el inventario";
+            DebugInfo = ex.Message;
+        }
+        finally
+        {
+            IsLoading = false;
+        }
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        try
+        {
+            IsLoading = true;
+            StateHasChanged();
+
+            var result = await ApiService.FncUpdateProductInventoryAsync(UpdateDto);
+            
+            if (result.Status)
+            {
+                // Usar InvokeAsync para la navegación
+                await InvokeAsync(() =>
+                {
+                    Navigation.NavigateTo("/inventory", replace: true);
+                });
+            }
+            else
+            {
+                ErrorMessage = result.Message ?? "Error al actualizar";
+                IsLoading = false;
+                StateHasChanged();
+            }
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = "Error: " + ex.Message;
+            IsLoading = false;
+            StateHasChanged();
+        }
+    }
+
+    private void NavigateToList()
+    {
+        Navigation.NavigateTo("/inventory", replace: true);
+    }
+}
