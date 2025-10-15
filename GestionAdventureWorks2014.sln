@@ -4,12 +4,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 17.14.36301.6
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
-	ProjectSection(SolutionItems) = preProject
-		Contributing.md = Contributing.md
-		PROMPTS.md = PROMPTS.md
-		AdventureWorks.Enterprise.Api\TECHNICAL_DOC.md = AdventureWorks.Enterprise.Api\TECHNICAL_DOC.md
-		AdventureWorks.Enterprise.App\USER_GUIDE.md = AdventureWorks.Enterprise.App\USER_GUIDE.md
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdventureWorks.Enterprise.Api", "AdventureWorks.Enterprise.Api\AdventureWorks.Enterprise.Api.csproj", "{F9558996-11DA-48FE-A643-7AB6CEB09C9A}"
 EndProject
