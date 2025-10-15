@@ -1,34 +1,51 @@
-# .NET
+# .gitignore para proyectos .NET 8 y Blazor
+
+# Archivos y carpetas de compilación
 bin/
 obj/
+
+# Archivos de usuario y configuración local
 *.user
 *.suo
-*.vs/
-*.vscode/
-*.dbmdl
-*.dbproj
-*.pdb
-*.cache
-*.log
-*.DS_Store
-*.swp
+*.userosscache
 *.sln.docstates
-# Visual Studio
 .vs/
-# NuGet
-*.nupkg
-# Build Results
-*.dll
-*.exe
-# Test Results
-TestResults/
-# Others
+
+# Archivos de dependencias
+packages/
+
+# Archivos temporales y de logs
+*.log
 *.tmp
-*.bak
-*.ide
-*.orig
-# Rider
+
+# Archivos de configuración de Visual Studio Code
+.vscode/
+
+# Archivos de configuración de Rider
 .idea/
-# OS
+
+# Archivos de configuración de Mac
+*.DS_Store
+
+# Archivos de configuración de Windows
 Thumbs.db
-Desktop.ini
+
+# Archivos de publicación
+publish/
+
+# Archivos de configuración de test
+TestResults/
+
+# Archivos de configuración de NuGet
+*.nupkg
+
+# Archivos de configuración de Azure
+*.azurepubxml
+*.pubxml
+
+# Archivos de configuración de Docker
+Dockerfile*
+
+# ¡NO EXCLUIR!
+# Asegúrate de NO excluir archivos de solución (*.sln), proyectos (*.csproj), ni carpetas de código fuente
+# Estos archivos son necesarios para mantener la estructura y funcionalidad de la solución
